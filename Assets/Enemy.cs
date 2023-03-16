@@ -4,17 +4,22 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
+
 public class Enemy : MonoBehaviour
 {
-   // public Animator hitAnimator;
+    public Animator hitAnimator;
 
     public int health = 1;
     public Rigidbody rb;
-
-    // Start is called before the first frame update
     void Start()
     {
-        
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
     }
     public void TakeDamage()
     {
@@ -26,13 +31,11 @@ public class Enemy : MonoBehaviour
         }
     }
 
-
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("bullet"))
         {
-           // hitAnimator.SetTrigger("shot");
+           
 
             health--;
             if (health <= 0)
@@ -40,32 +43,10 @@ public class Enemy : MonoBehaviour
                 Die();
             }
         }
-        else
-  if (other.CompareTag("Ice"))
-        {
-            //hitAnimator.SetTrigger("shot");
 
-            health--;
-            if (health <= 0)
-            {
-                Die();
-            }
-        }
-        else
-              if (other.CompareTag("Fire"))
+        if (other.CompareTag("Ice"))
         {
-         //   hitAnimator.SetTrigger("shot");
 
-            health--;
-            if (health <= 0)
-            {
-                Die();
-            }
-        }
-        else
-        if (other.CompareTag("Lightening"))
-        {
-          //  hitAnimator.SetTrigger("shot");
 
             health--;
             if (health <= 0)
@@ -79,10 +60,5 @@ public class Enemy : MonoBehaviour
     {
 
         Destroy(gameObject);
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
