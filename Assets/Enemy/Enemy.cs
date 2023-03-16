@@ -54,6 +54,17 @@ public class Enemy : MonoBehaviour
                 Die();
             }
         }
+        if (other.CompareTag("Fire"))
+        {
+
+
+            health--;
+            if (health <= 0)
+            {
+                Die();
+            }
+        }
+
 
     }
     void Die()
