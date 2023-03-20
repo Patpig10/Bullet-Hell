@@ -16,10 +16,14 @@ public class Guncontroller : MonoBehaviour
 
     public Transform firePoint;
 
+    public Image[] ammoUI;
+    public int maxAmmo = 7;
+    public int currentAmmo = 7;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        UpdateAmmoUI();
     }
 
     // Update is called once per frame
@@ -51,14 +55,32 @@ public class Guncontroller : MonoBehaviour
             isFiring = false;
 
         shotTimeCounter += Time.deltaTime;
-        if (isFiring)
+        if (isFiring && currentAmmo > 0)
         {
             if (shotTimeCounter > timeBetweenShots)
             {
                 shotTimeCounter = 0.0f;
                 BulletController newBullet = Instantiate(bullets[currentBulletIndex], firePoint.position, firePoint.rotation) as BulletController;
                 newBullet.speed = bulletSpeed;
+                currentAmmo--;
+                UpdateAmmoUI();
             }
         }
     }
+
+    public void UpdateAmmoUI()
+    {
+        for (int i = 0; i < ammoUI.Length; i++)
+        {
+            if (i < currentAmmo)
+            {
+                ammoUI[i].enabled = true;
+            }
+            else
+            {
+                ammoUI[i].enabled = false;
+            }
+        }
+    }
+
 }

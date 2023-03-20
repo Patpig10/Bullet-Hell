@@ -4,37 +4,37 @@ using UnityEngine;
 
 public class ChasePlayer : MonoBehaviour
 {
-    public Transform Player;
-    public float MoveSpeed;
-    public float detectionDistance;
-    public float proximityDistance;
-    public float nonChaseHeight;
-    public float playerYPosition;
-    public float firingRange;
+    public Transform player;
+    public float moveSpeed = 5f;
+    public float stoppingDistance = 2f;
+    public float retreatDistance = 1f;
 
-    void Start()
+    public float MoveSpeed
     {
-        Player = GameObject.FindWithTag("Player").transform;
+        get { return moveSpeed; }
+        set { moveSpeed = value; }
+    }
+
+    public float OriginalMoveSpeed { get; set; }
+
+    private void Start()
+    {
+        OriginalMoveSpeed = moveSpeed;
     }
 
     void Update()
     {
-        if (Vector3.Distance(transform.position, Player.position) <= detectionDistance)
+        if (Vector3.Distance(transform.position, player.position) > stoppingDistance)
         {
-            if (Player.position.y < playerYPosition)
-            {
-                transform.LookAt(Player);
-            }
-            if (Player.position.y < nonChaseHeight && proximityDistance > Vector3.Distance(Player.position, transform.position))
-            {
-                transform.position += transform.forward * MoveSpeed * Time.deltaTime;
-            }
-
-            if (Vector3.Distance(transform.position, Player.position) <= proximityDistance)
-            {
-                //Here Call any function U want 
-            }
-
+            transform.position = Vector3.MoveTowards(transform.position, player.position, moveSpeed * Time.deltaTime);
+        }
+        else if (Vector3.Distance(transform.position, player.position) < stoppingDistance && Vector3.Distance(transform.position, player.position) > retreatDistance)
+        {
+            transform.position = this.transform.position;
+        }
+        else if (Vector3.Distance(transform.position, player.position) < retreatDistance)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, player.position, -moveSpeed * Time.deltaTime);
         }
     }
 }
