@@ -16,6 +16,10 @@ public class Enemy : MonoBehaviour
     public bool isBurning = false;
     public bool isFrost = false;
     public bool isElectric = false;
+    public bool isWet = false;
+    public bool isShocked = false;
+    public GameObject explosionPrefab;
+    public DamageAura damageAura;
 
     void Start()
     {
@@ -59,6 +63,21 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(duration);
         isBurning = false;
     }
+
+    private IEnumerator SetIsElectricForDuration(float duration)
+    {
+        isElectric = true;
+        yield return new WaitForSeconds(duration);
+        isElectric = false;
+    }
+
+    private IEnumerator SetIsWetForDuration(float duration)
+    {
+        isWet = true;
+        yield return new WaitForSeconds(duration);
+        isWet = false;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("bullet"))
@@ -96,6 +115,11 @@ public class Enemy : MonoBehaviour
                 StartCoroutine(SetIsBurningForDuration(5f));
 
             }
+            if(isBurning && isFrost)
+            {
+                StartCoroutine(SetIsWetForDuration(5f));
+
+            }
         }
         else
         {
@@ -115,12 +139,40 @@ public class Enemy : MonoBehaviour
             {
                 burningStatus.StopBurning();
             }
+            if (isBurning && isFrost)
+            {
+                StartCoroutine(SetIsWetForDuration(5f));
+
+            }
+        }
+        if (other.CompareTag("Lightening"))
+        {
+            int damage = BulletController.damage;
+
+            TakeDamage(damage);
+            if (isElectric && isBurning)
+            {
+                StartCoroutine(SetIsElectricForDuration(5f));
+
+                Debug.Log("Explosion!");
+                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            }
+            isElectric = true;
+            if(isElectric && isWet)
+            {
+                if (damageAura != null)
+                {
+                    // Apply damage aura effect to self
+                    StartCoroutine(damageAura.ApplyDamageAura(this));
+                }
+            }
         }
 
-        if (other.CompareTag("Fire"))
+            if (other.CompareTag("Fire"))
         {
             if (Random.value < 0.5f && burningStatus != null)
             {
+                StartCoroutine(SetIsBurningForDuration(5f));
                 burningStatus.StartBurning();
                 Debug.Log("Enemy burning!");
             }
