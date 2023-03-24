@@ -106,7 +106,7 @@ public class Enemy : MonoBehaviour
             int damage = BulletController.damage;
             TakeDamage(damage);
 
-            if (Random.value < 0.5f && burningStatus != null)
+            if (Random.value < 1f && burningStatus != null)
             {
                 
 
@@ -128,7 +128,7 @@ public class Enemy : MonoBehaviour
 
         if (other.CompareTag("Ice"))
         {
-            if (Random.value < 0.5f && frostStatus != null)
+            if (Random.value < 1f && frostStatus != null)
             {
                 frostStatus.ApplyFrostEffect();
 
@@ -170,7 +170,7 @@ public class Enemy : MonoBehaviour
 
             if (other.CompareTag("Fire"))
         {
-            if (Random.value < 0.5f && burningStatus != null)
+            if (Random.value < 1f && burningStatus != null)
             {
                 StartCoroutine(SetIsBurningForDuration(5f));
                 burningStatus.StartBurning();

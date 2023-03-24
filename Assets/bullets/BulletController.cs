@@ -63,6 +63,6 @@ public class BulletController : MonoBehaviour
     {
 
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
-        Destroy(gameObject, 6);
+        Destroy(gameObject, 4);
     }
 }
