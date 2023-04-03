@@ -27,9 +27,15 @@ public class Enemy : MonoBehaviour
         burningStatus = GetComponent<BurningStatus>();
 
         chasePlayer = FindObjectOfType<ChasePlayer>();
-        originalMoveSpeed = (int)chasePlayer.MoveSpeed;
+        originalMoveSpeed = (int)chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed;
+        chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = 5f; // set the initial speed
 
+        if (damageAura != null)
+        {
+            damageAura.StartCoroutine(damageAura.ApplyDamageAura(this));
+        }
     }
+
 
     // ...
 
@@ -97,8 +103,8 @@ public class Enemy : MonoBehaviour
 
                 StartCoroutine(SetIsFrostForDuration(5f));
 
-                float moveSpeed = chasePlayer.MoveSpeed * 0.5f;
-                chasePlayer.MoveSpeed = (int)moveSpeed;
+                float moveSpeed = chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed * 0.5f;
+                chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = moveSpeed; // set the new speed based on NavmeshAgent's speed property
             }
         }
         else if (other.CompareTag("Fire"))
@@ -108,36 +114,12 @@ public class Enemy : MonoBehaviour
 
             if (Random.value < 1f && burningStatus != null)
             {
-                
+
 
                 burningStatus.StartBurning();
                 Debug.Log("Enemy burning!");
                 StartCoroutine(SetIsBurningForDuration(5f));
 
-            }
-            if(isBurning && isFrost)
-            {
-                StartCoroutine(SetIsWetForDuration(5f));
-
-            }
-        }
-        else
-        {
-            // regular bullet damage
-        }
-
-        if (other.CompareTag("Ice"))
-        {
-            if (Random.value < 1f && frostStatus != null)
-            {
-                frostStatus.ApplyFrostEffect();
-
-                float moveSpeed = chasePlayer.MoveSpeed * 0.5f;
-                chasePlayer.MoveSpeed = (int)moveSpeed;
-            }
-            if (burningStatus != null)
-            {
-                burningStatus.StopBurning();
             }
             if (isBurning && isFrost)
             {
@@ -145,7 +127,7 @@ public class Enemy : MonoBehaviour
 
             }
         }
-        if (other.CompareTag("Lightening"))
+        else if (other.CompareTag("Lightening"))
         {
             int damage = BulletController.damage;
 
@@ -158,7 +140,7 @@ public class Enemy : MonoBehaviour
                 Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             }
             isElectric = true;
-            if(isElectric && isWet)
+            if (isElectric && isWet)
             {
                 if (damageAura != null)
                 {
@@ -167,8 +149,7 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
-
-            if (other.CompareTag("Fire"))
+        if (other.CompareTag("Fire"))
         {
             if (Random.value < 1f && burningStatus != null)
             {
@@ -179,10 +160,15 @@ public class Enemy : MonoBehaviour
             if (frostStatus != null)
             {
                 frostStatus.RemoveFrostEffect();
-                chasePlayer.MoveSpeed = originalMoveSpeed;
+                chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = originalMoveSpeed; // reset speed to original value
             }
         }
+        else
+        {
+            // regular bullet damage
+        }
     }
+
 
     void Die()
     {
