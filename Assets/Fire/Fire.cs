@@ -9,7 +9,7 @@ public class Fire : MonoBehaviour
     {
         
     }
-    public Material brownMaterial;
+    public Material GrassBurn;
 
 
     void OnTriggerEnter(Collider other)
@@ -21,7 +21,7 @@ public class Fire : MonoBehaviour
             int greenMaterialIndex = -1;
             for (int i = 0; i < materials.Length; i++)
             {
-                if (materials[i].name.Contains("Green"))
+                if (materials[i].name.Contains("Grass"))
                 {
                     greenMaterialIndex = i;
                     break;
@@ -29,7 +29,7 @@ public class Fire : MonoBehaviour
             }
             if (greenMaterialIndex >= 0)
             {
-                materials[greenMaterialIndex] = brownMaterial;
+                materials[greenMaterialIndex] = GrassBurn;
                 renderer.materials = materials;
             }
             Destroy(other.gameObject, 3.0f);

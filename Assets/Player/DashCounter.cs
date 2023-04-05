@@ -38,14 +38,28 @@ public class DashCounter : MonoBehaviour
     {
         float startTime = Time.time;
         Vector3 direction = transform.forward;
+
+        // Set up a layer mask to ignore collisions with certain layers
+        int layerMask = ~(1 << LayerMask.NameToLayer("Ignore Raycast"));
+
         while (Time.time < startTime + dashDuration)
         {
+            // Check for collisions using a raycast
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, direction, out hit, dashSpeed * Time.deltaTime, layerMask))
+            {
+                // If there is a collision, stop the dash
+                isDashing = false;
+                yield break;
+            }
+
             transform.position += direction * dashSpeed * Time.deltaTime;
             yield return null;
         }
         yield return new WaitForSeconds(0.1f); // add a small delay here
         isDashing = false;
     }
+
 
 
     public void ResetDashes()
