@@ -25,8 +25,9 @@ public class BurningStatus : MonoBehaviour
         if (isBurning)
         {
             burnTimer += Time.deltaTime;
-            if (burnTimer >= 2.0f) // apply burn damage every 2 seconds
+            if (burnTimer >= 2.0f && burnTimer - Time.deltaTime < 2.0f)
             {
+                IsActive();
                 enemy.TakeDamage(burnDamagePerSecond);
                 burnTimer = 0.0f;
             }
@@ -41,6 +42,11 @@ public class BurningStatus : MonoBehaviour
     {
         isBurning = true;
         burnTimer = 0.0f;
+    }
+
+    public bool IsActive()
+    {
+        return isBurning;
     }
 
     public void StopBurning()

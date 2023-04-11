@@ -4,13 +4,8 @@ using UnityEngine;
 
 public class Fire : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
     public Material GrassBurn;
-
+    public GameObject fireParticlePrefab;
 
     void OnTriggerEnter(Collider other)
     {
@@ -35,16 +30,26 @@ public class Fire : MonoBehaviour
             Destroy(other.gameObject, 3.0f);
             Debug.Log("Fire collided with Grass");
         }
+
+        // Add particle system when fire bullet hits an enemy
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            BurningStatus burningStatus = other.gameObject.GetComponent<BurningStatus>();
+            if (burningStatus != null)
+            {
+                burningStatus.StartBurning();
+
+                // Spawn particle system
+                GameObject particleSystem = Instantiate(fireParticlePrefab, other.gameObject.transform);
+                particleSystem.transform.localPosition = Vector3.zero;
+                particleSystem.transform.localRotation = Quaternion.identity;
+            }
+        }
     }
 
-    /* if(gameObject.CompareTag("Poison"))
-         {
-         this.GetCompnent<Rigidbody>().velocity = transform.foward* _poisonSpeed;
-         } */
-
-    // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
+

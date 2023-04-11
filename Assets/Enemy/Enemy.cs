@@ -20,9 +20,14 @@ public class Enemy : MonoBehaviour
     public bool isShocked = false;
     public GameObject explosionPrefab;
     public DamageAura damageAura;
+    [SerializeField] private ParticleSystem burningParticles;
 
     void Start()
     {
+        if (burningParticles != null)
+        {
+            burningParticles.Stop();
+        }
         frostStatus = GetComponent<FrostStatus>();
         burningStatus = GetComponent<BurningStatus>();
 
@@ -42,7 +47,10 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-
+        if (burningParticles != null && burningParticles.isPlaying && (burningStatus == null || !burningStatus.IsActive()))
+        {
+            burningParticles.Stop();
+        }
     }
 
     public void TakeDamage(int damage)
@@ -68,6 +76,10 @@ public class Enemy : MonoBehaviour
         isBurning = true;
         yield return new WaitForSeconds(duration);
         isBurning = false;
+        if (burningParticles != null && !burningStatus.IsActive())
+        {
+            burningParticles.Stop();
+        }
     }
 
     private IEnumerator SetIsElectricForDuration(float duration)
@@ -114,17 +126,21 @@ public class Enemy : MonoBehaviour
 
             if (Random.value < 1f && burningStatus != null)
             {
-
+                burningParticles.Play();
 
                 burningStatus.StartBurning();
                 Debug.Log("Enemy burning!");
                 StartCoroutine(SetIsBurningForDuration(5f));
+                if (burningParticles != null && !burningStatus.IsActive())
+                {
+                    burningParticles.Play();
+                }
 
             }
+
             if (isBurning && isFrost)
             {
                 StartCoroutine(SetIsWetForDuration(5f));
-
             }
         }
         else if (other.CompareTag("Lightening"))
@@ -153,6 +169,9 @@ public class Enemy : MonoBehaviour
         {
             if (Random.value < 1f && burningStatus != null)
             {
+               
+                    burningParticles.Play();
+                
                 StartCoroutine(SetIsBurningForDuration(5f));
                 burningStatus.StartBurning();
                 Debug.Log("Enemy burning!");
