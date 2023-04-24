@@ -19,33 +19,42 @@ public class Guncontroller : MonoBehaviour
     public Image[] ammoUI;
     public int maxAmmo = 7;
     public int currentAmmo = 7;
+    public GameObject elementBlock;
+    private Image image;
 
     // Start is called before the first frame update
     void Start()
     {
         UpdateAmmoUI();
+        image = elementBlock.GetComponent<Image>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Switch between bullets using mouse scroll wheel
-        float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
-        if (scrollWheel > 0)
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            currentBulletIndex--;
-            if (currentBulletIndex < 0)
-            {
-                currentBulletIndex = bullets.Count - 1;
-            }
+            currentBulletIndex = 0;
+            // Change color to yellow
+            image.color = Color.yellow;
         }
-        else if (scrollWheel < 0)
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            currentBulletIndex++;
-            if (currentBulletIndex >= bullets.Count)
-            {
-                currentBulletIndex = 0;
-            }
+            currentBulletIndex = 1;
+            // Change color to blue
+            image.color = Color.blue;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            currentBulletIndex = 2;
+            // Change color to red
+            image.color = Color.red;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            currentBulletIndex = 3;
+            // Change color to purple
+            image.color = new Color(0.5f, 0, 0.5f);
         }
 
         if (Input.GetMouseButtonDown(0))
