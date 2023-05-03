@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerMovement1 : MonoBehaviour
 {
@@ -16,6 +18,7 @@ public class PlayerMovement1 : MonoBehaviour
     private int currentDashCount = 0;
     private float dashRechargeTime = 1f;
     private float timeSinceLastDash = 0f;
+   public Animator mELEE;
 
     void Start()
     {
@@ -52,6 +55,16 @@ public class PlayerMovement1 : MonoBehaviour
         {
             Vector3 targetPosition = transform.position + movement * speed * Time.deltaTime;
             transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref currentVelocity, dashCounter.IsDashing() ? 0.01f : 0.1f);
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+            {
+            SceneManager.LoadScene(0);
+
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+
+            mELEE.SetTrigger("Attack");
         }
 
         // jump if the player is on the ground and space key is pressed

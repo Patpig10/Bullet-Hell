@@ -91,5 +91,10 @@ public class Guncontroller : MonoBehaviour
             }
         }
     }
+    public void AmmonBoost()
+    {
+        FindObjectOfType<Guncontroller>().currentAmmo++;
+        FindObjectOfType<Guncontroller>().UpdateAmmoUI();
+    }
 
 }

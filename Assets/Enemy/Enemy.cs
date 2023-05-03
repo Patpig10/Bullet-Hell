@@ -116,7 +116,7 @@ public class Enemy : MonoBehaviour
                 StartCoroutine(SetIsFrostForDuration(5f));
 
                 float moveSpeed = chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed * 0.5f;
-                chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = moveSpeed; // set the new speed based on NavmeshAgent's speed property
+                chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = moveSpeed;
             }
         }
         else if (other.CompareTag("Fire"))
@@ -160,7 +160,7 @@ public class Enemy : MonoBehaviour
             {
                 if (damageAura != null)
                 {
-                    // Apply damage aura effect to self
+                  
                     StartCoroutine(damageAura.ApplyDamageAura(this));
                 }
             }
@@ -179,8 +179,12 @@ public class Enemy : MonoBehaviour
             if (frostStatus != null)
             {
                 frostStatus.RemoveFrostEffect();
-                chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = originalMoveSpeed; // reset speed to original value
+                chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = originalMoveSpeed;
             }
+        }
+        else if (other.CompareTag("Blade"))
+        {
+            TakeDamage(3);
         }
         else
         {
