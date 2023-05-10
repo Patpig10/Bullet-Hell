@@ -1,31 +1,24 @@
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
 
-public class ChasePlayer : MonoBehaviour
+public class ChasePlayer2 : MonoBehaviour
 {
     public Transform player;
     public float stoppingDistance = 2f;
+    public float retreatDistance = 1f;
     public float detectionRadius = 10f;
     public float hearingDistance = 5f;
     public float patrolSpeed = 2f;
     public float chaseSpeed = 5f;
-    public FrostStatus frostStatus;
 
     private NavMeshAgent agent;
     private Vector3 patrolDestination;
     private bool isPatrolling = true;
-    private bool isFrozen = false;
-    private float originalSpeed;
-    public Animator animator;
 
     void Start()
     {
-        frostStatus = GetComponent<FrostStatus>();
         agent = GetComponent<NavMeshAgent>();
         patrolDestination = transform.position;
-        animator = GetComponent<Animator>();
-        originalSpeed = agent.speed;
     }
 
     void Update()
@@ -45,9 +38,8 @@ public class ChasePlayer : MonoBehaviour
             {
                 // Chase the player
                 isPatrolling = false;
-                agent.speed = isFrozen ? originalSpeed * 0.5f : chaseSpeed;
+                agent.speed = chaseSpeed;
                 agent.SetDestination(player.position);
-                animator.SetBool("Walk Forward", true); // Set the RunForward parameter to true
             }
         }
 
@@ -65,18 +57,8 @@ public class ChasePlayer : MonoBehaviour
             }
 
             // Move towards the patrol destination
-            agent.speed = isFrozen ? originalSpeed * 0.5f : patrolSpeed;
+            agent.speed = patrolSpeed;
             agent.SetDestination(patrolDestination);
-            animator.SetBool("Walk Forward", false); // Set the RunForward parameter to false
         }
     }
-
-   /*  IEnumerator SetIsFrozenForDuration(float duration)
-    {
-        isFrozen = true;
-        yield return new WaitForSeconds(duration);
-        isFrozen = false;
-    }
-   */
-  
 }

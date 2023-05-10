@@ -43,13 +43,19 @@ public class Fire : MonoBehaviour
                 GameObject particleSystem = Instantiate(fireParticlePrefab, other.gameObject.transform);
                 particleSystem.transform.localPosition = Vector3.zero;
                 particleSystem.transform.localRotation = Quaternion.identity;
+                /*ParticleSystem ps = particleSystem.GetComponent<ParticleSystem>();
+                if (ps != null)
+                {
+                    // Stop the particle system after 5 seconds
+                    ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    Destroy(particleSystem, 5f);
+                }*/
             }
         }
-    }
 
-    void Update()
-    {
+        void Update()
+        {
 
+        }
     }
 }
-

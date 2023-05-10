@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
     public BurningStatus burningStatus;
     public int damage = BulletController.damage;
     public int originalMoveSpeed;
-    private ChasePlayer chasePlayer;
+    public ChasePlayer chasePlayer;
     public bool isBurning = false;
     public bool isFrost = false;
     public bool isElectric = false;
@@ -21,6 +21,9 @@ public class Enemy : MonoBehaviour
     public GameObject explosionPrefab;
     public DamageAura damageAura;
     [SerializeField] private ParticleSystem burningParticles;
+
+    private float frozenTime = 10f;
+    private float currentFrozenTime = 10f;
 
     void Start()
     {
@@ -41,12 +44,21 @@ public class Enemy : MonoBehaviour
         }
     }
 
-
-    // ...
-
-
     void Update()
     {
+        if (isFrost)
+        {
+            if (currentFrozenTime < frozenTime)
+            {
+                currentFrozenTime += Time.deltaTime;
+            }
+            else
+            {
+                isFrost = false;
+                currentFrozenTime = 0f;
+            }
+        }
+
         if (burningParticles != null && burningParticles.isPlaying && (burningStatus == null || !burningStatus.IsActive()))
         {
             burningParticles.Stop();
@@ -63,14 +75,10 @@ public class Enemy : MonoBehaviour
         else
         {
             Debug.Log("Enemy health: " + health);
+            hitAnimator.SetTrigger("Take Damage");
         }
     }
-    private IEnumerator SetIsFrostForDuration(float duration)
-    {
-        isFrost = true;
-        yield return new WaitForSeconds(duration);
-        isFrost = false;
-    }
+
     private IEnumerator SetIsBurningForDuration(float duration)
     {
         isBurning = true;
@@ -108,15 +116,22 @@ public class Enemy : MonoBehaviour
             int damage = BulletController.damage;
             TakeDamage(damage);
 
-            if (Random.value < 0.5f && frostStatus != null)
+            if (Random.value < 1f && frostStatus != null)
             {
-                frostStatus.ApplyFrostEffect();
-                Debug.Log("Enemy frozen!");
+                if (!isFrost)
+                {
+                    isFrost = true;
+                    frozenTime = 10f;
 
-                StartCoroutine(SetIsFrostForDuration(5f));
+                    frostStatus.ApplyFrostEffect();
+                    Debug.Log("Enemy frozen!");
 
-                float moveSpeed = chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed * 0.5f;
-                chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = moveSpeed;
+                    float moveSpeed = chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed * 0f;
+                    chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().speed = moveSpeed;
+                    chasePlayer.GetComponent<UnityEngine.AI.NavMeshAgent>().isStopped = true; // Stop chasing
+                    chasePlayer.patrolSpeed = 0; // set chase speed to 0
+                    chasePlayer.chaseSpeed = 0;
+                }
             }
         }
         else if (other.CompareTag("Fire"))
