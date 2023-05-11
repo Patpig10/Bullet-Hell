@@ -4,7 +4,7 @@ using System.Collections;
 
 public class ChasePlayer : MonoBehaviour
 {
-    public Transform player;
+    public string playerTag = "Player"; // Tag of the player
     public float stoppingDistance = 2f;
     public float detectionRadius = 10f;
     public float hearingDistance = 5f;
@@ -31,7 +31,12 @@ public class ChasePlayer : MonoBehaviour
 
     void Update()
     {
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        GameObject playerObject = GameObject.FindGameObjectWithTag(playerTag); // Find the player object by tag
+
+        if (playerObject == null)
+            return;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, playerObject.transform.position);
 
         // Check if the player is within the detection radius
         if (distanceToPlayer <= detectionRadius)
@@ -42,7 +47,7 @@ public class ChasePlayer : MonoBehaviour
                 // Stop patrolling and chase the player
                 isPatrolling = false;
                 agent.speed = isFrozen ? originalSpeed * 0.5f : chaseSpeed * aggressionLevel; // Adjust the chase speed based on aggression level
-                agent.SetDestination(player.position);
+                agent.SetDestination(playerObject.transform.position);
                 animator.SetBool("Walk Forward", true); // Set the RunForward parameter to true
             }
             else
@@ -50,7 +55,7 @@ public class ChasePlayer : MonoBehaviour
                 // Chase the player while maintaining a stopping distance
                 isPatrolling = false;
                 agent.speed = isFrozen ? originalSpeed * 0.5f : chaseSpeed * aggressionLevel; // Adjust the chase speed based on aggression level
-                Vector3 targetPosition = player.position - (transform.position - player.position).normalized * stoppingDistance;
+                Vector3 targetPosition = playerObject.transform.position - (transform.position - playerObject.transform.position).normalized * stoppingDistance;
                 agent.SetDestination(targetPosition);
                 animator.SetBool("Walk Forward", true); // Set the RunForward parameter to true
             }

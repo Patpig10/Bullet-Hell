@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BurningStatus : MonoBehaviour
 {
+    [SerializeField] private ParticleSystem burningParticles;
+
     public int burnDamagePerSecond = 1;
     public float burnDuration = 5.0f;
 
@@ -24,9 +26,12 @@ public class BurningStatus : MonoBehaviour
     {
         if (isBurning)
         {
+
             burnTimer += Time.deltaTime;
             if (burnTimer >= 2.0f && burnTimer - Time.deltaTime < 2.0f)
             {
+                burningParticles.Play();
+
                 IsActive();
                 enemy.TakeDamage(burnDamagePerSecond);
                 burnTimer = 0.0f;

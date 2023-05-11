@@ -9,36 +9,23 @@ public class WaveSpawner : MonoBehaviour
     public class Wave
     {
         public string name;
-        public Transform[] enemies; // Changed from Transform to Transform[]
-        public int[] counts; // Holds the count for each enemy type
+        public Transform[] enemies;
+        public int[] counts;
         public float rate;
     }
 
     public Wave[] waves;
     private int nextWave = 0;
-    public int NextWave
-    {
-        get { return nextWave + 1; }
-    }
 
     public Transform[] spawnPoints;
 
     public float timeBetweenWaves = 5f;
     private float waveCountdown;
-    public float WaveCountdown
-    {
-        get { return waveCountdown; }
-    }
-
-    private float searchCountdown = 1f;
-
     private SpawnState state = SpawnState.COUNTING;
-    public SpawnState State
-    {
-        get { return state; }
-    }
+    private int totalEnemies;
+    private int enemiesEliminated;
 
-    void Start()
+    private void Start()
     {
         if (spawnPoints.Length == 0)
         {
@@ -46,18 +33,16 @@ public class WaveSpawner : MonoBehaviour
         }
 
         waveCountdown = timeBetweenWaves;
+        SetNextWave();
     }
 
-    void Update()
+    private void Update()
     {
         if (state == SpawnState.WAITING)
         {
             if (!EnemyIsAlive())
             {
                 WaveCompleted();
-            }
-            else
-            {
                 return;
             }
         }
@@ -75,62 +60,69 @@ public class WaveSpawner : MonoBehaviour
         }
     }
 
-    void WaveCompleted()
+    private void SetNextWave()
     {
-        Debug.Log("Wave Completed!");
+        totalEnemies = 0;
+        enemiesEliminated = 0;
 
-        state = SpawnState.COUNTING;
-        waveCountdown = timeBetweenWaves;
-
-        if (nextWave + 1 > waves.Length - 1)
+        if (nextWave >= waves.Length)
         {
-            nextWave = 0;
-            Debug.Log("ALL WAVES COMPLETE! Looping...");
+            nextWave = 0; // Restart from the first wave
         }
-        else
+
+        for (int i = 0; i < waves[nextWave].counts.Length; i++)
         {
-            nextWave++;
+            totalEnemies += waves[nextWave].counts[i];
         }
     }
 
-    bool EnemyIsAlive()
+    private IEnumerator SpawnWave(Wave wave)
     {
-        searchCountdown -= Time.deltaTime;
-        if (searchCountdown <= 0f)
-        {
-            searchCountdown = 1f;
-            if (GameObject.FindGameObjectWithTag("Enemy") == null)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    IEnumerator SpawnWave(Wave _wave)
-    {
-        Debug.Log("Spawning Wave: " + _wave.name);
+        Debug.Log("Spawning Wave: " + wave.name);
         state = SpawnState.SPAWNING;
 
-        for (int i = 0; i < _wave.enemies.Length; i++)
+        for (int i = 0; i < wave.enemies.Length; i++)
         {
-            for (int j = 0; j < _wave.counts[i]; j++) // Spawn count number of enemies of each type
+            for (int j = 0; j < wave.counts[i]; j++)
             {
-                SpawnEnemy(_wave.enemies[i]);
-                yield return new WaitForSeconds(1f / _wave.rate);
+                SpawnEnemy(wave.enemies[i]);
+                yield return new WaitForSeconds(1f / wave.rate);
             }
         }
 
         state = SpawnState.WAITING;
-
-        yield break;
+        SetNextWave();
+        waveCountdown = timeBetweenWaves;
     }
 
-    void SpawnEnemy(Transform _enemy)
+    private void SpawnEnemy(Transform enemy)
     {
-        Debug.Log("Spawning Enemy: " + _enemy.name);
+        Debug.Log("Spawning Enemy: " + enemy.name);
 
-        Transform _sp = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        Instantiate(_enemy, _sp.position, _sp.rotation);
+        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        Instantiate(enemy, spawnPoint.position, spawnPoint.rotation);
+    }
+
+    private bool EnemyIsAlive()
+    {
+        return enemiesEliminated < totalEnemies;
+    }
+
+    public void EnemyEliminated()
+    {
+        enemiesEliminated++;
+
+        if (!EnemyIsAlive() && state == SpawnState.WAITING)
+        {
+            WaveCompleted();
+        }
+    }
+
+    private void WaveCompleted()
+    {
+        Debug.Log("Wave Completed!");
+        state = SpawnState.COUNTING;
+        nextWave++;
     }
 }
+

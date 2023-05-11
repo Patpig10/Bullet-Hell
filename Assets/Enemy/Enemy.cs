@@ -141,14 +141,14 @@ public class Enemy : MonoBehaviour
 
             if (Random.value < 1f && burningStatus != null)
             {
-                burningParticles.Play();
+                Instantiate(burningParticles, transform.position, Quaternion.identity);
 
                 burningStatus.StartBurning();
                 Debug.Log("Enemy burning!");
                 StartCoroutine(SetIsBurningForDuration(5f));
                 if (burningParticles != null && !burningStatus.IsActive())
                 {
-                    burningParticles.Play();
+                    Instantiate(burningParticles, transform.position, Quaternion.identity);
                 }
 
             }
@@ -199,7 +199,7 @@ public class Enemy : MonoBehaviour
         }
         else if (other.CompareTag("Blade"))
         {
-            TakeDamage(3);
+            TakeDamage(15);
         }
         else
         {
