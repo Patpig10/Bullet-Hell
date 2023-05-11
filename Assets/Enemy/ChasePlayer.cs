@@ -11,6 +11,7 @@ public class ChasePlayer : MonoBehaviour
     public float patrolSpeed = 2f;
     public float chaseSpeed = 5f;
     public FrostStatus frostStatus;
+    public float aggressionLevel = 1f; // New variable for aggression level
 
     private NavMeshAgent agent;
     private Vector3 patrolDestination;
@@ -38,15 +39,19 @@ public class ChasePlayer : MonoBehaviour
             // Check if the player is within the hearing distance
             if (distanceToPlayer <= hearingDistance)
             {
-                // Stop chasing and start patrolling
-                isPatrolling = true;
+                // Stop patrolling and chase the player
+                isPatrolling = false;
+                agent.speed = isFrozen ? originalSpeed * 0.5f : chaseSpeed * aggressionLevel; // Adjust the chase speed based on aggression level
+                agent.SetDestination(player.position);
+                animator.SetBool("Walk Forward", true); // Set the RunForward parameter to true
             }
             else
             {
-                // Chase the player
+                // Chase the player while maintaining a stopping distance
                 isPatrolling = false;
-                agent.speed = isFrozen ? originalSpeed * 0.5f : chaseSpeed;
-                agent.SetDestination(player.position);
+                agent.speed = isFrozen ? originalSpeed * 0.5f : chaseSpeed * aggressionLevel; // Adjust the chase speed based on aggression level
+                Vector3 targetPosition = player.position - (transform.position - player.position).normalized * stoppingDistance;
+                agent.SetDestination(targetPosition);
                 animator.SetBool("Walk Forward", true); // Set the RunForward parameter to true
             }
         }
@@ -70,13 +75,4 @@ public class ChasePlayer : MonoBehaviour
             animator.SetBool("Walk Forward", false); // Set the RunForward parameter to false
         }
     }
-
-   /*  IEnumerator SetIsFrozenForDuration(float duration)
-    {
-        isFrozen = true;
-        yield return new WaitForSeconds(duration);
-        isFrozen = false;
-    }
-   */
-  
 }
