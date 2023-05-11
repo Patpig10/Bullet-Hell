@@ -11,6 +11,8 @@ public class HeartSystemNolimit : MonoBehaviour
     private int life;
     private int maxLife;
     private bool dead;
+    public PointManager pointManager;
+    public int healingCost = 10;
 
     private void Start()
     {
@@ -24,6 +26,14 @@ public class HeartSystemNolimit : MonoBehaviour
         {
             // set gameover scene or reload level
             SceneManager.LoadScene(SceneManager.GetActiveScene().name); //reload level code
+        }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (pointManager.currentPoints >= healingCost && life < maxLife)
+            {
+                pointManager.DeductPoints(healingCost);
+                AddLife();
+            }
         }
     }
     public void TakeDamage(int d)

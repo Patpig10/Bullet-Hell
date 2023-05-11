@@ -19,7 +19,7 @@ public class GateManager : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerNearby = true;
-            if (!isMessageDisplayed)
+            if (!isMessageDisplayed && isGateActive) // Check if the gate is active
             {
                 DisplayMessage();
             }
@@ -41,12 +41,13 @@ public class GateManager : MonoBehaviour
         {
             isGateActive = false;
             gameObject.SetActive(false);
+            messageText.gameObject.SetActive(false); // Hide the messageText object
         }
     }
 
     private void DisplayMessage()
     {
-        if (messageText != null)
+        if (messageText != null && isGateActive) // Check if the gate is active
         {
             int pointsNeeded = requiredPoints - PointManager.instance.currentPoints;
             string message = "You need " + pointsNeeded + " more points to open the gate.";

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class EnemyG : MonoBehaviour
 {
     public Animator hitAnimator;
 
@@ -43,7 +43,7 @@ public class Enemy : MonoBehaviour
 
         if (damageAura != null)
         {
-            damageAura.StartCoroutine(damageAura.ApplyDamageAura(this));
+            //     damageAura.StartCoroutine(damageAura.ApplyDamageAura(this));
         }
     }
 
@@ -124,15 +124,10 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("bullet"))
+        if (other.CompareTag("Ice"))
         {
             int damage = BulletController.damage;
-            TakeDamage(damage);
-        }
-        else if (other.CompareTag("Ice"))
-        {
-            int damage = BulletController.damage;
-           // TakeDamage(damage);
+       //     TakeDamage(damage);
 
             if (Random.value < 1f && frostStatus != null)
             {
@@ -155,7 +150,7 @@ public class Enemy : MonoBehaviour
         else if (other.CompareTag("Fire"))
         {
             int damage = BulletController.damage;
-           // TakeDamage(damage);
+             TakeDamage(damage);
 
             if (Random.value < 1f && burningStatus != null)
             {
@@ -178,7 +173,7 @@ public class Enemy : MonoBehaviour
         else if (other.CompareTag("Lightening"))
         {
             int damage = BulletController.damage;
-          //  TakeDamage(damage);
+            //  TakeDamage(damage);
 
             if (isElectric && isBurning)
             {
@@ -192,7 +187,7 @@ public class Enemy : MonoBehaviour
             {
                 if (damageAura != null)
                 {
-                    StartCoroutine(damageAura.ApplyDamageAura(this));
+                    //   StartCoroutine(damageAura.ApplyDamageAura(this));
                 }
             }
         }
