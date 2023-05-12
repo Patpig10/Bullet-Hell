@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class WaveSpawner : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class WaveSpawner : MonoBehaviour
     private int totalEnemies;
     private int enemiesEliminated;
 
+    private bool isActive = true; // Control the activation and disabling
+
     private void Start()
     {
         if (spawnPoints.Length == 0)
@@ -38,6 +41,8 @@ public class WaveSpawner : MonoBehaviour
 
     private void Update()
     {
+        if (!isActive) return; // Don't execute the spawner if it's disabled
+
         if (state == SpawnState.WAITING)
         {
             if (!EnemyIsAlive())
@@ -58,6 +63,16 @@ public class WaveSpawner : MonoBehaviour
         {
             waveCountdown -= Time.deltaTime;
         }
+    }
+
+    public void Activate()
+    {
+        isActive = true;
+    }
+
+    public void Disable()
+    {
+        isActive = false;
     }
 
     private void SetNextWave()
@@ -125,4 +140,3 @@ public class WaveSpawner : MonoBehaviour
         nextWave++;
     }
 }
-
